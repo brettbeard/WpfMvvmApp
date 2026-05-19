@@ -1,0 +1,137 @@
+<Window x:Class="WpfMvvmApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WpfMvvmApp.ViewModels"
+        mc:Ignorable="d"
+        Title="To-Do List — MVVM Toolkit" Height="600" Width="480"
+        Background="{StaticResource BackgroundBrush}"
+        WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="24,20">
+            <StackPanel>
+                <TextBlock Text="My To-Do List"
+                           FontSize="24" FontWeight="Bold"
+                           Foreground="White"/>
+                <TextBlock Foreground="#B0BEC5" FontSize="13" Margin="0,4,0,0">
+                    <Run Text="{Binding CompletedCount, Mode=OneWay}"/>
+                    <Run Text=" of "/>
+                    <Run Text="{Binding TotalCount, Mode=OneWay}"/>
+                    <Run Text=" tasks completed"/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+
+        <!-- Add Item Row -->
+        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,0,0,1"
+                Padding="16,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0"
+                         Style="{StaticResource ModernTextBox}"
+                         Text="{Binding NewTodoTitle, UpdateSourceTrigger=PropertyChanged}"
+                         VerticalAlignment="Center">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Return" Command="{Binding AddTodoCommand}"/>
+                    </TextBox.InputBindings>
+                </TextBox>
+
+                <Button Grid.Column="2"
+                        Content="Add"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding AddTodoCommand}"
+                        MinWidth="72"/>
+            </Grid>
+        </Border>
+
+        <!-- Todo List -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Todos}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource SurfaceBrush}"
+                                BorderBrush="{StaticResource DividerBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="16,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="8"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding IsCompleted}"
+                                          Style="{StaticResource ModernCheckBox}"
+                                          VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="2"
+                                           Text="{Binding Title}"
+                                           FontSize="14"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                                    <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <Button Grid.Column="4"
+                                        Content="Remove"
+                                        Style="{StaticResource DangerButton}"
+                                        Command="{Binding DataContext.RemoveTodoCommand,
+                                                  RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="3" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,1,0,0"
+                Padding="16,10">
+            <Grid>
+                <TextBlock VerticalAlignment="Center"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="12">
+                    <Run Text="{Binding TotalCount, Mode=OneWay}"/>
+                    <Run Text=" item(s) total"/>
+                </TextBlock>
+                <Button HorizontalAlignment="Right"
+                        Content="Clear Completed"
+                        Style="{StaticResource DangerButton}"
+                        Command="{Binding ClearCompletedCommand}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
