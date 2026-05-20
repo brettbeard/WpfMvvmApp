@@ -3,6 +3,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using WpfMvvmApp.Models;
+using System;
 
 namespace WpfMvvmApp.ViewModels;
 
@@ -28,7 +29,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(CanAddTodo))]
     private void AddTodo()
     {
-        var item = new TodoItem { Title = NewTodoTitle.Trim() };
+        var item = new TodoItem { Title = NewTodoTitle.Trim(), CreatedAt = DateTime.Now };
         item.PropertyChanged += (_, _) => RefreshCounts();
         Todos.Add(item);
         NewTodoTitle = string.Empty;
